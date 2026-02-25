@@ -36,7 +36,7 @@ class AIEducationApp extends StatelessWidget {
   }
 }
 
-// Data Model
+// Data Models
 class Topic {
   final String title;
   final String description;
@@ -51,7 +51,23 @@ class Topic {
   });
 }
 
-// Mock Data based on user request
+class Course {
+  final String title;
+  final String provider;
+  final String description;
+  final String level;
+  final String url;
+
+  const Course({
+    required this.title,
+    required this.provider,
+    required this.description,
+    required this.level,
+    required this.url,
+  });
+}
+
+// Mock Data
 final List<Topic> topics = [
   const Topic(
     title: 'Main Pattern of AI Training',
@@ -147,6 +163,51 @@ Participate in Kaggle competitions or join AI Discord servers to learn from othe
   ),
 ];
 
+final List<Course> freeCourses = [
+  const Course(
+    title: 'Elements of AI',
+    provider: 'University of Helsinki',
+    description: 'A series of free online courses created by Reaktor and the University of Helsinki. Great for non-technical beginners to understand what AI is.',
+    level: 'Beginner',
+    url: 'elementsofai.com',
+  ),
+  const Course(
+    title: 'Practical Deep Learning for Coders',
+    provider: 'fast.ai',
+    description: 'Top-down approach to deep learning. Get models running first, then learn the theory. Highly recommended for developers.',
+    level: 'Intermediate',
+    url: 'course.fast.ai',
+  ),
+  const Course(
+    title: 'Machine Learning Specialization',
+    provider: 'DeepLearning.AI (Andrew Ng)',
+    description: 'The most famous course in AI. Covers the fundamentals of machine learning. (Audit for free on Coursera).',
+    level: 'Beginner/Intermediate',
+    url: 'coursera.org',
+  ),
+  const Course(
+    title: 'Google AI Courses',
+    provider: 'Google',
+    description: 'Flexible online training programs designed by Google experts. Covers Generative AI, LLMs, and more.',
+    level: 'All Levels',
+    url: 'grow.google/ai',
+  ),
+  const Course(
+    title: 'CS50\'s Introduction to AI with Python',
+    provider: 'Harvard University (edX)',
+    description: 'Explores the concepts and algorithms at the foundation of modern artificial intelligence.',
+    level: 'Intermediate',
+    url: 'edx.org/course/cs50s-introduction-to-artificial-intelligence-with-python',
+  ),
+  const Course(
+    title: 'Intro to Deep Learning',
+    provider: 'Kaggle',
+    description: 'Fast-paced, practical introduction to deep learning using TensorFlow and Keras.',
+    level: 'Beginner',
+    url: 'kaggle.com/learn/intro-to-deep-learning',
+  ),
+];
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -156,63 +217,130 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('AI Training Guide'),
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.school_outlined),
+            tooltip: 'Free Courses',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CoursesListScreen()),
+              );
+            },
+          ),
+        ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: topics.length,
-        itemBuilder: (context, index) {
-          final topic = topics[index];
-          return Card(
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TopicDetailScreen(topic: topic),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      child: Icon(
-                        topic.icon,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        children: [
+          // Banner for Courses
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.all(16),
+            child: Material(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(16),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CoursesListScreen()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            topic.title,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Icon(
+                            Icons.auto_awesome,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(width: 12),
                           Text(
-                            topic.description,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Colors.grey[600],
+                            'Looking for Free Courses?',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
                                 ),
                           ),
                         ],
                       ),
-                    ),
-                    const Icon(Icons.chevron_right, color: Colors.grey),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'Tap here to see a curated list of free AI learning resources.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9),
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemCount: topics.length,
+              itemBuilder: (context, index) {
+                final topic = topics[index];
+                return Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TopicDetailScreen(topic: topic),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                            child: Icon(
+                              topic.icon,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  topic.title,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  topic.description,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.grey[600],
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.chevron_right, color: Colors.grey),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -275,6 +403,101 @@ class TopicDetailScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CoursesListScreen extends StatelessWidget {
+  const CoursesListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Free AI Courses'),
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: freeCourses.length,
+        itemBuilder: (context, index) {
+          final course = freeCourses[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          course.title,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          course.level,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondaryContainer,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'By ${course.provider}',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    course.description,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.link, size: 20, color: Colors.grey),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            course.url,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
